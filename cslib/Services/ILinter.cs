@@ -1,3 +1,4 @@
+#if FALSE
 namespace cslib
 {
     public interface ILinter
@@ -6,3 +7,4 @@ namespace cslib
     }
 }
 
+#endif

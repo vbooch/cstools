@@ -14,6 +14,7 @@ namespace cslint
     {
         public static void Main(string[] args)
         {
+            #if FALSE
             var kernel = new StandardKernel();
             kernel.Load<CSharpLibraryNinjectModule>();
 
@@ -96,8 +97,10 @@ namespace cslint
             }
 
             Console.Write(JsonConvert.SerializeObject(allResults));
+            #endif
         }
 
+        #if FALSE
         private static string GetRelativePath(string filespec, string folder)
         {
             Uri pathUri = new Uri(filespec);
@@ -117,5 +120,6 @@ namespace cslint
             Console.WriteLine("Options:");
             p.WriteOptionDescriptions(Console.Out);
         }
+        #endif
     }
 }

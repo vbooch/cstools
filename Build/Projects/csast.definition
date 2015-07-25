@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Name="cscover" Path="cscover" Type="Console" Platforms="Linux,MacOS,Windows">
+<Project Name="csast" Path="csast" Type="Console" Platforms="Linux,MacOS,Windows">
   <Properties>
     <FrameworkVersions>
       <Platform Name="Windows">
@@ -16,11 +16,11 @@
   <References>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Ninject" />
-    <Reference Include="Mono.Cecil" />
+    <Reference Include="ICSharpCode.NRefactory" />
     <Reference Include="NDesk.Options" />
+    <Reference Include="Newtonsoft.Json" />
     <Reference Include="cslib" />
   </References>
   <Files>

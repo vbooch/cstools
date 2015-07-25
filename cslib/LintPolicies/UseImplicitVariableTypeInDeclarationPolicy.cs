@@ -1,3 +1,4 @@
+#if FALSE
 using System.Linq;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
@@ -60,3 +61,4 @@ namespace cslib
     }
 }
 
+#endif

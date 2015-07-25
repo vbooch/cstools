@@ -1,17 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Name="csunit" Path="csunit" Type="Console" Platforms="Linux,MacOS,Windows">
+  <Properties>
+    <FrameworkVersions>
+      <Platform Name="Windows">
+        <Version>v4.5</Version>
+      </Platform>
+      <Platform Name="MacOS">
+        <Version>v4.5</Version>
+      </Platform>
+      <Platform Name="Linux">
+        <Version>v4.5</Version>
+      </Platform>
+    </FrameworkVersions>
+  </Properties>
   <References>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="cstools.Ninject" />
+    <Reference Include="Ninject" />
+    <Reference Include="cslib" />
   </References>
-  <Services>
-    <Service Name="Default">
-      <Requires>cslib/Default</Requires>
-      <InfersReference>False</InfersReference>
-    </Service>
-  </Services>
   <Files>
     <Compile Include="Program.cs" />
   </Files>

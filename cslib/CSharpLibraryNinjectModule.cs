@@ -9,8 +9,10 @@ namespace cslib
             this.Bind<IInstrumenter>().To<DefaultInstrumenter>().InSingletonScope();
             
             this.Bind<IProjectDiscovery>().To<DefaultProjectDiscovery>();
+            #if FALSE
             this.Bind<ILinter>().To<BuiltinLinter>();
             this.Bind<ILinter>().To<StyleCopLinter>();
+            #endif
         }
     }
 }

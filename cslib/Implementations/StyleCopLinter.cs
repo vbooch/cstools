@@ -1,3 +1,4 @@
+#if FALSE
 using System;
 using StyleCop;
 using System.Collections.Generic;
@@ -77,3 +78,4 @@ namespace cslib
     }
 }
 
+#endif

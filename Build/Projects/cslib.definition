@@ -1,17 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Name="cslib" Path="cslib" Type="Library" Platforms="Linux,MacOS,Windows">
+  <Properties>
+    <FrameworkVersions>
+      <Platform Name="Windows">
+        <Version>v4.5</Version>
+      </Platform>
+      <Platform Name="MacOS">
+        <Version>v4.5</Version>
+      </Platform>
+      <Platform Name="Linux">
+        <Version>v4.5</Version>
+      </Platform>
+    </FrameworkVersions>
+  </Properties>
   <References>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="cstools.Ninject" />
+    <Reference Include="Ninject" />
     <Reference Include="cstools.StyleCop" />
+    <Reference Include="Newtonsoft.Json" />
+    <Reference Include="Mono.Cecil" />
+    <Reference Include="ICSharpCode.NRefactory" />
   </References>
-  <Services>
-    <Service Name="Default" />
-  </Services>
   <Files>
     <Compile Include="CSharpLibraryNinjectModule.cs" />
     <Compile Include="Implementations\BuiltinLinter.cs" />
@@ -35,6 +48,5 @@
     <Compile Include="Services\ILinter.cs" />
     <Compile Include="Services\IProjectDiscovery.cs" />
     <Compile Include="Services\ISettings.cs" />
-    <None Include="packages.config" />
   </Files>
 </Project>

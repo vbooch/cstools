@@ -1,3 +1,4 @@
+#if FALSE
 using System;
 using System.Linq;
 using ICSharpCode.NRefactory.CSharp;
@@ -62,3 +63,4 @@ namespace cslib
     }
 }
 
+#endif

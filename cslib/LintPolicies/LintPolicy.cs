@@ -1,3 +1,4 @@
+#if FALSE
 using ICSharpCode.NRefactory.CSharp;
 
 namespace cslib
@@ -12,4 +13,4 @@ namespace cslib
         }
     }
 }
-
+#endif

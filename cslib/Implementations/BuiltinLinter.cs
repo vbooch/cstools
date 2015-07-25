@@ -1,5 +1,8 @@
+#if FALSE
 using System.IO;
-using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory6.CSharp;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace cslib
 {
@@ -7,11 +10,10 @@ namespace cslib
     {
         public void Process(LintResults results)
         {
-            var parser = new CSharpParser();
             SyntaxTree tree;
             using (var reader = new StreamReader(results.FileName))
             {
-                tree = parser.Parse(reader.ReadToEnd(), results.FileName);
+                tree = CSharpSyntaxTree.ParseText(reader.ReadToEnd());
             }
 
             // Apply policies
@@ -24,3 +26,4 @@ namespace cslib
     }
 }
 
+#endif
