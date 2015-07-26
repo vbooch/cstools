@@ -1,0 +1,38 @@
+namespace Test
+{
+    class ABC
+    {
+        public void Method(
+            string abc,
+            string def,
+            string ghi)
+        {
+            if (test)
+            {
+                Test(
+                  abc,
+                  () => { "test" });
+            }
+        }
+    }
+}
+~~~~~~~~~~
+~~~~~~~~~~
+namespace Test
+{
+    class ABC
+    {
+        public void Method(
+            string abc,
+            string def,
+            string ghi)
+        {
+            if (test)
+            {
+                Test(
+                  abc,
+                  () => { "test" });
+            }
+        }
+    }
+}

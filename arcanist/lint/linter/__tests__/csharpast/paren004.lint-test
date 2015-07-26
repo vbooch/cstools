@@ -1,0 +1,35 @@
+namespace Test
+{
+    class ABC
+    {
+        public void Method(
+            string abc,
+            string def,
+            string ghi)
+        {
+            if (test)
+            {
+                Invoke ("test");
+            }
+        }
+    }
+}
+~~~~~~~~~~
+error:12:23
+~~~~~~~~~~
+namespace Test
+{
+    class ABC
+    {
+        public void Method(
+            string abc,
+            string def,
+            string ghi)
+        {
+            if (test)
+            {
+                Invoke("test");
+            }
+        }
+    }
+}

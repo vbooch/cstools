@@ -13,6 +13,7 @@ phutil_register_library_map(array(
     'ArcanistCSharpASTLinterTestCase' => 'arcanist/lint/linter/__tests__/ArcanistCSharpASTLinterTestCase.php',
     'BracePlacementCSharpLintPolicy' => 'arcanist/lint/linter/csharp/BracePlacementCSharpLintPolicy.php',
     'CSharpLintPolicy' => 'arcanist/lint/linter/csharp/CSharpLintPolicy.php',
+    'WhitespaceBeforeAfterParenthesisLintPolicy' => 'arcanist/lint/linter/csharp/WhitespaceBeforeAfterParenthesisLintPolicy.php',
   ),
   'function' => array(),
   'xmap' => array(
@@ -20,5 +21,6 @@ phutil_register_library_map(array(
     'ArcanistCSharpASTLinterTestCase' => 'ArcanistLinterTestCase',
     'BracePlacementCSharpLintPolicy' => 'CSharpLintPolicy',
     'CSharpLintPolicy' => 'Phobject',
+    'WhitespaceBeforeAfterParenthesisLintPolicy' => 'CSharpLintPolicy',
   ),
 ));

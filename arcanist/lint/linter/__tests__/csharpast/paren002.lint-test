@@ -1,0 +1,27 @@
+namespace Test
+{
+    class ABC
+    {
+        public void Method
+            (string abc,
+            string def,
+            string ghi)
+        {
+        }
+    }
+}
+~~~~~~~~~~
+error:5:27
+~~~~~~~~~~
+namespace Test
+{
+    class ABC
+    {
+        public void Method(
+            string abc,
+            string def,
+            string ghi)
+        {
+        }
+    }
+}

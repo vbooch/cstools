@@ -61,6 +61,41 @@ abstract class CSharpLintPolicy extends Phobject {
       $desc);
   }
   
+  protected function findNextTokenInHierarchy(array $token, array $parents) {
+    if (count($parents) === 0) {
+      return array(null, array());
+    }
+    
+    $parent = last($parents);
+    $children = idx($parent, 'Children', array());
+    
+    $active = false;
+    for ($i = 0; $i < count($children); $i++) {
+      $child = $children[$i];
+     
+      if ($child === $token) {
+        $active = true;
+        continue;
+      } else if (!$active) {
+        continue;
+      }
+      
+      if ($this->isToken($child)) {
+        return array($child, $parents);
+      }
+      
+      list($token_candidate, $token_parents) =
+        $this->findFirstTokenOfNode($child, true, $parents);
+      if ($token_candidate !== null) {
+        return array($token_candidate, $token_parents);
+      }
+    }
+    
+    $copy = $parents;
+    array_pop($copy);
+    return $this->findNextTokenInHierarchy($parent, $copy);
+  }
+  
   protected function findPreviousTokenInHierarchy(array $token, array $parents) {
     if (count($parents) === 0) {
       return null;
@@ -85,9 +120,10 @@ abstract class CSharpLintPolicy extends Phobject {
         return $child;
       }
       
-      $token = $this->findLastTokenOfNode($child);
-      if ($token !== null) {
-        return $token;
+      $token_candidate = 
+        $this->findLastTokenOfNode($child);
+      if ($token_candidate !== null) {
+        return $token_candidate;
       }
     }
     
@@ -96,18 +132,38 @@ abstract class CSharpLintPolicy extends Phobject {
     return $this->findPreviousTokenInHierarchy($parent, $copy);
   }
   
-  protected function findFirstTokenOfNode(array $node) {
+  protected function findFirstTokenOfNode(
+    array $node,
+    $include_parents = false,
+    $parents = array()) {
+    
     if (count(idx($node, 'Children', array())) === 0) {
-      return null;
+      if ($include_parents) {
+        return array(null, array());
+      } else {
+        return null;
+      }
     }
     
+    array_push($parents, $node);
     foreach (idx($node, 'Children', array()) as $child) {
       if ($this->isToken($child)) {
-        return $child;
+        if ($include_parents) {
+          return array($child, $parents);
+        } else {
+          return $child;
+        }
       } else if ($this->isNode($child)) {
-        $result = $this->findFirstTokenOfNode($child);
-        if ($result === null) {
-          return $result;
+        list($result, $result_parents) = $this->findFirstTokenOfNode(
+          $child,
+          true,
+          $parents);
+        if ($result !== null) {
+          if ($include_parents) {
+            return array($result, $result_parents);
+          } else {
+            return $result;
+          }
         }
       }
     }
@@ -128,7 +184,7 @@ abstract class CSharpLintPolicy extends Phobject {
         return $child;
       } else if ($this->isNode($child)) {
         $result = $this->findLastTokenOfNode($child);
-        if ($result === null) {
+        if ($result !== null) {
           return $result;
         }
       }
