@@ -1,0 +1,12 @@
+using System;
+
+class ABC : DEF {
+}
+~~~~~~~~~~
+error:3:16
+~~~~~~~~~~
+using System;
+
+class ABC : DEF
+{
+}
