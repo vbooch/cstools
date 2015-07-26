@@ -1,0 +1,40 @@
+using System;
+
+public class ABC
+{
+    public void Method()
+    {
+        a.b = MethodCall(
+            paren1,
+            paren2);
+            
+        a.b = 
+            MethodCall(
+                paren1,
+                paren2);
+                
+        a.b = SomeProp
+            .Access;
+    }
+}
+~~~~~~~~~~
+~~~~~~~~~~
+using System;
+
+public class ABC
+{
+    public void Method()
+    {
+        a.b = MethodCall(
+            paren1,
+            paren2);
+            
+        a.b = 
+            MethodCall(
+                paren1,
+                paren2);
+                
+        a.b = SomeProp
+            .Access;
+    }
+}

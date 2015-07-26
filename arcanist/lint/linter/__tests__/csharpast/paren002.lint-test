@@ -12,6 +12,7 @@ namespace Test
 }
 ~~~~~~~~~~
 error:5:27
+error:6:1
 ~~~~~~~~~~
 namespace Test
 {

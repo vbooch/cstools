@@ -1,0 +1,26 @@
+using System;
+
+public class ABC
+{
+    public void Method()
+    {
+        a.b = new C(
+            paramA,
+            paramB,
+            paramC);
+    }
+}
+~~~~~~~~~~
+~~~~~~~~~~
+using System;
+
+public class ABC
+{
+    public void Method()
+    {
+        a.b = new C(
+            paramA,
+            paramB,
+            paramC);
+    }
+}

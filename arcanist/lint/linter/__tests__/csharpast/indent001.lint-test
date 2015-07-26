@@ -1,0 +1,14 @@
+namespace Test
+{
+    class ABC
+    {
+    }
+}
+~~~~~~~~~~
+~~~~~~~~~~
+namespace Test
+{
+    class ABC
+    {
+    }
+}

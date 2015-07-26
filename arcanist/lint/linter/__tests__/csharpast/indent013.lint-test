@@ -1,0 +1,30 @@
+using System;
+
+public class ABC
+{
+    public void Method()
+    {
+        var assignment =
+            value;
+            
+        var assignment =
+            value.SomeLine()
+                .MethodCall();
+    }
+}
+~~~~~~~~~~
+~~~~~~~~~~
+using System;
+
+public class ABC
+{
+    public void Method()
+    {
+        var assignment =
+            value;
+            
+        var assignment =
+            value.SomeLine()
+                .MethodCall();
+    }
+}

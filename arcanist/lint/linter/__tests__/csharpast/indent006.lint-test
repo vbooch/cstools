@@ -1,0 +1,29 @@
+using System;
+
+public class ABC
+{
+    public int Before;
+
+    /// <summary>
+    /// This comment is partially indented wrong.
+        /// </summary>
+    public int Test;
+    
+    public int After;
+}
+~~~~~~~~~~
+error:9:1
+~~~~~~~~~~
+using System;
+
+public class ABC
+{
+    public int Before;
+
+    /// <summary>
+    /// This comment is partially indented wrong.
+    /// </summary>
+    public int Test;
+    
+    public int After;
+}

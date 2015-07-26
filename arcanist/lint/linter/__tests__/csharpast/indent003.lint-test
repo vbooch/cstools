@@ -1,0 +1,15 @@
+namespace Test
+{
+   class ABC
+    {
+    }
+}
+~~~~~~~~~~
+error:3:1
+~~~~~~~~~~
+namespace Test
+{
+    class ABC
+    {
+    }
+}

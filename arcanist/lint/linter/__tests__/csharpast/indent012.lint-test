@@ -1,0 +1,22 @@
+using System;
+
+public class ABC
+{
+    [Obsolete(
+        "test")]
+    public void Method()
+    {
+    }
+}
+~~~~~~~~~~
+~~~~~~~~~~
+using System;
+
+public class ABC
+{
+    [Obsolete(
+        "test")]
+    public void Method()
+    {
+    }
+}

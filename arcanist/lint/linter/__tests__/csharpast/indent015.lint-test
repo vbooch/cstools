@@ -1,0 +1,26 @@
+using System;
+
+public class ABC
+{
+    public void Method()
+    {
+        for (var i = 0; i < 10; i++)
+        {
+            var test = a;
+        }
+    }
+}
+~~~~~~~~~~
+~~~~~~~~~~
+using System;
+
+public class ABC
+{
+    public void Method()
+    {
+        for (var i = 0; i < 10; i++)
+        {
+            var test = a;
+        }
+    }
+}

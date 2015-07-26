@@ -1,0 +1,40 @@
+using System;
+
+public class ABC
+{
+    public void Method()
+    {
+        var assignment = MethodCall(
+            paren1,
+            paren2);
+            
+        var assignment = 
+            MethodCall(
+                paren1,
+                paren2);
+                
+        var assignment = SomeProp
+            .Access;
+    }
+}
+~~~~~~~~~~
+~~~~~~~~~~
+using System;
+
+public class ABC
+{
+    public void Method()
+    {
+        var assignment = MethodCall(
+            paren1,
+            paren2);
+            
+        var assignment = 
+            MethodCall(
+                paren1,
+                paren2);
+                
+        var assignment = SomeProp
+            .Access;
+    }
+}

@@ -82,13 +82,13 @@ final class BracePlacementCSharpLintPolicy extends CSharpLintPolicy {
           $my_line = $this->getStartLine($token);
           $prev_line = $this->getEndLine($previous);
           if ($my_line === $prev_line) {
-            $whitespace = $this->getWhitespaceBeforeNode(
-              $token,
-              $parents,
-              $previous);
-            $this->raiseLintAtLine(
-              $this->getEndLine($previous),
-              $this->getEndColumn($previous),
+            list($whitespace, $whitespace_offset) = 
+              $this->getWhitespaceWithOffsetBeforeToken(
+                $token,
+                $parents,
+                $previous);
+            $this->raiseLintAtOffset(
+              $whitespace_offset,
               self::BRACE_MUST_BE_ON_NEWLINE,
               'Opening braces must be placed on a '.
               'newline when the closing brace is '.

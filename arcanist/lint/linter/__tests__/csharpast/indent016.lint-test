@@ -1,0 +1,22 @@
+using System;
+
+public class ABC
+{
+    public void Method()
+    // first comment
+    {
+        // last comment
+    }
+}
+~~~~~~~~~~
+~~~~~~~~~~
+using System;
+
+public class ABC
+{
+    public void Method()
+    // first comment
+    {
+        // last comment
+    }
+}

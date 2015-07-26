@@ -1,0 +1,36 @@
+using System;
+
+public class ABC
+{
+    public void Method()
+    {
+        objectToCall
+                .Call()
+          .AnotherCall();
+        
+        objectToCall.SameLine()
+                .Call()
+          .AnotherCall();
+    }
+}
+~~~~~~~~~~
+error:8:1
+error:9:1
+error:12:1
+error:13:1
+~~~~~~~~~~
+using System;
+
+public class ABC
+{
+    public void Method()
+    {
+        objectToCall
+            .Call()
+            .AnotherCall();
+        
+        objectToCall.SameLine()
+            .Call()
+            .AnotherCall();
+    }
+}

@@ -89,18 +89,19 @@ final class WhitespaceBeforeAfterParenthesisLintPolicy
               }
             }
             
-            $whitespace_before_open = $this->getWhitespaceBeforeNode(
-              $token,
-              $parents,
-              $previous);
-            $whitespace_before_next = $this->getWhitespaceBeforeNode(
-              $next,
-              $next_parents,
-              $token);
+            list($whitespace_before_open, $ws_before_open_offset) = 
+              $this->getWhitespaceWithOffsetBeforeToken(
+                $token,
+                $parents,
+                $previous);
+            list($whitespace_before_next, $ws_before_next_offset) = 
+              $this->getWhitespaceWithOffsetBeforeToken(
+                $next,
+                $next_parents,
+                $token);
             if ($empty_block) {
-              $this->raiseLintAtLine(
-                $this->getEndLine($previous),
-                $this->getEndColumn($previous),
+              $this->raiseLintAtOffset(
+                $ws_before_open_offset,
                 self::NO_WHITESPACE_BEFORE_PARENTHESIS,
                 'Whitespace is not permitted before '.
                 'a parenthesis.',
@@ -110,9 +111,8 @@ final class WhitespaceBeforeAfterParenthesisLintPolicy
                 $this->getText($next),
                 $this->getText($token).$this->getText($next));
             } else {
-              $this->raiseLintAtLine(
-                $this->getEndLine($previous),
-                $this->getEndColumn($previous),
+              $this->raiseLintAtOffset(
+                $ws_before_open_offset,
                 self::NO_WHITESPACE_BEFORE_PARENTHESIS,
                 'Whitespace is not permitted before '.
                 'a parenthesis.',
@@ -128,13 +128,13 @@ final class WhitespaceBeforeAfterParenthesisLintPolicy
             if ($prev_column < $my_column) {
               // There is whitespace between the parenthesis
               // and the previous token, so we need to remove it.
-              $whitespace = $this->getWhitespaceBeforeNode(
-                $token,
-                $parents,
-                $previous);
-              $this->raiseLintAtLine(
-                $this->getEndLine($previous),
-                $this->getEndColumn($previous),
+              list($whitespace, $whitespace_offset) = 
+                $this->getWhitespaceWithOffsetBeforeToken(
+                  $token,
+                  $parents,
+                  $previous);
+              $this->raiseLintAtOffset(
+                $whitespace_offset,
                 self::NO_WHITESPACE_BEFORE_PARENTHESIS,
                 'Whitespace is not permitted before '.
                 'a parenthesis.',

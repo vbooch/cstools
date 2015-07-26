@@ -55,6 +55,21 @@ abstract class CSharpLintPolicy extends Phobject {
       $replacement);
   }
 
+  final public function raiseLintAtOffset(
+    $offset,
+    $code,
+    $desc,
+    $original = null,
+    $replacement = null) {
+    
+    return $this->linter->raiseLintAtOffset(
+      $offset,
+      $this->getCode().$code,
+      $desc,
+      $original,
+      $replacement);
+  }
+
   final public function raiseLintAtPath($code, $desc) {
     return $this->linter->raiseLintAtPath(
       $this->getCode().$code,
@@ -273,104 +288,349 @@ abstract class CSharpLintPolicy extends Phobject {
         'Character');
   }
   
-  protected function getIndentation($token, array $parents) {
-    $indentation = '';
+  protected function getOffset(array $node_or_token) {
+    return idx($node_or_token, 'SpanStart');
+  }
+  
+  protected function getLeadingTrivia(array $node_or_token) {
+    return idx($node_or_token, 'LeadingTrivia');
+  }
+  
+  protected function getTrailingTrivia(array $node_or_token) {
+    return idx($node_or_token, 'TrailingTrivia');
+  }
+  
+  protected function getIndentation($token, array $parents, $is_trivia_before_token = false) {
+    if (count($parents) === 0) {
+      return '';
+    }
     
-    for ($i = 0; $i < count($parents); $i++) {
-      $parent = $parents[$i];
-      $next_parent = idx($parents, $i + 1);
-      if ($next_parent === null) {
-        $next_parent = $token;
+    $parent = head($parents);
+    return $this->getIndentationFromParent(
+      0,
+      $parent,
+      $token,
+      $parents,
+      $is_trivia_before_token,
+      array(),
+      null);
+  }
+  
+  protected function getIndentationFromParent(
+    $index,
+    $parent,
+    $token,
+    $parents,
+    $is_trivia_before_token,
+    $global_braces,
+    $last_vardec_line) {
+    
+    $next_parent = idx($parents, $index + 1);
+    if ($next_parent === null) {
+      $next_parent = $token;
+    }
+    foreach ($this->getChildren($parent) as $child) {
+      $did_indent = false;
+      
+      // Before next parent / token.
+      if ($this->isNode($child)) {
+        if ($this->getType($child) === 'CaseSwitchLabelSyntax' ||
+          $this->getType($child) === 'DefaultSwitchLabelSyntax') {
+          if ($this->isNode(last($global_braces)) &&
+            ($this->getType(last($global_braces)) === 'CaseSwitchLabelSyntax' ||
+            $this->getType(last($global_braces)) === 'DefaultSwitchLabelSyntax')) {
+            array_pop($global_braces);
+          }
+          array_push($global_braces, $child);
+          $did_indent = true;
+        }
+        
+        if ($this->getType($child) === 'InvocationExpressionSyntax' ||
+            $this->getType($child) === 'MemberAccessExpressionSyntax' ||
+            $this->getType($child) === 'ObjectCreationExpressionSyntax') {
+          if (count($global_braces) > 0) {
+            $last_gb = last($global_braces);
+            if ($this->isNode($last_gb)) {
+              if ($this->getType($last_gb) === 'VariableDeclarationSyntax' ||
+                  $this->getType($last_gb) === 'AssignmentExpressionSyntax') {
+                if ($this->getStartLine($child) === $this->getStartLine($last_gb)) {
+                  // TODO This is not the right way to find the assignment operator,
+                  // to do this properly we need to traverse the tree from here, find
+                  // the = token, and compare it's offset with the current child.  This
+                  // means we need a function for searching for a specific token.
+                  //print_r("last_gb text trimmed: ".json_encode($this->getText($last_gb))."\n");
+                  $assignment = strpos(idx($last_gb, 'TrimmedText'), '=');
+                  if ($assignment !== false) {
+                    //print_r("last_gb text: ".json_encode($this->getText($last_gb))."\n");
+                    //print_r("last_gb offset: ".json_encode($this->getOffset($last_gb))."\n");
+                    //print_r("last_gb offset + assignment: ".json_encode($this->getOffset($last_gb) + $assignment)."\n");
+                    //print_r("child text: ".json_encode($this->getText($child))."\n");
+                    //print_r("child offset: ".json_encode($this->getOffset($child))."\n");
+                    if ($this->getOffset($child) > $this->getOffset($last_gb) + $assignment) {
+                      // Cancel the indentation of the variable declaration 
+                      // since we have an overridding call that encapsulates
+                      // other indentation.
+                      //print_r("popped\n");
+                      array_pop($global_braces);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        
+        if ($this->getType($child) === 'MemberAccessExpressionSyntax') {
+          if ($this->getStartLine($child) < $this->getStartLine($token)) {
+            $last_gb = last($global_braces);
+            if (!$this->isNode($last_gb) ||
+              $this->getType($last_gb) !== 'MemberAccessExpressionSyntax') {
+              array_push($global_braces, $child);
+            }
+          }
+        }
+        
+        if ($this->getType($child) === 'VariableDeclarationSyntax') {
+          if ($this->getStartLine($child) < $this->getStartLine($token)) {
+            $last_gb = last($global_braces);
+            if (!$this->isNode($last_gb) ||
+              $this->getType($last_gb) !== 'VariableDeclarationSyntax') {
+              array_push($global_braces, $child);
+            }
+          }
+        }
+        
+        if ($this->getType($child) === 'AssignmentExpressionSyntax') {
+          if ($this->getStartLine($child) < $this->getStartLine($token)) {
+            $last_gb = last($global_braces);
+            if (!$this->isNode($last_gb) ||
+              $this->getType($last_gb) !== 'AssignmentExpressionSyntax') {
+              array_push($global_braces, $child);
+            }
+          }
+        }
+      } else if ($this->isToken($child)) {
+        if ($this->getValue($child) === '{') {
+          array_push($global_braces, $child);
+          $did_indent = true;
+        } else if ($this->getValue($child) === '(') {
+          array_push($global_braces, $child);
+          $did_indent = true;
+        } else if ($this->getValue($child) === '[') {
+          if ($this->getType($parent) !== 'AttributeListSyntax') {
+            array_push($global_braces, $child);
+            $did_indent = true;
+          }
+        } else if ($this->getValue($child) === '<') {
+          array_push($global_braces, $child);
+          $did_indent = true;
+        } else if ($this->getValue($child) === '}') {
+          if ($child !== $token || !$is_trivia_before_token) {
+            if (count($global_braces) > 0 && 
+              $this->isToken(last($global_braces)) &&
+              $this->getValue(last($global_braces)) === '{') {
+              array_pop($global_braces);
+            }
+          }
+        } else if ($this->getValue($child) === ')') {
+          if ($child !== $token || !$is_trivia_before_token) {
+            if (count($global_braces) > 0 && 
+              $this->isToken(last($global_braces)) &&
+              $this->getValue(last($global_braces)) === '(') {
+              array_pop($global_braces);
+            }
+          }
+        } else if ($this->getValue($child) === ']') {
+          if ($this->getType($parent) !== 'AttributeListSyntax') {
+            if ($child !== $token || !$is_trivia_before_token) {
+              if (count($global_braces) > 0 && 
+                $this->isToken(last($global_braces)) &&
+                $this->getValue(last($global_braces)) === '[') {
+                array_pop($global_braces);
+              }
+            }
+          }
+        } else if ($this->getValue($child) === '>') {
+          if ($child !== $token || !$is_trivia_before_token) {
+            if (count($global_braces) > 0 && 
+              $this->isToken(last($global_braces)) &&
+              $this->getValue(last($global_braces)) === '<') {
+              array_pop($global_braces);
+            }
+          }
+        }
       }
-      if ($this->isNode($parent)) {
-        if ($next_parent !== null) {
-          $children = $this->getChildren($parent);
-          $braces = array();
-          foreach ($children as $child) {
-            if ($this->isToken($child)) {
-              if ($this->getValue($child) === '{') {
-                array_push($braces, '{');
-              } else if ($this->getValue($child) === '}') {
-                if (count($braces) > 0 && last($braces) === '{') {
-                  array_pop($braces);
-                }
-              } else if ($this->getValue($child) === '(') {
-                array_push($braces, '(');
-              } else if ($this->getValue($child) === ')') {
-                if (count($braces) > 0 && last($braces) === '(') {
-                  array_pop($braces);
-                }
-              } else if ($this->getValue($child) === '[') {
-                array_push($braces, '[');
-              } else if ($this->getValue($child) === ']') {
-                if (count($braces) > 0 && last($braces) === '[') {
-                  array_pop($braces);
-                }
-              } else if ($this->getValue($child) === '<') {
-                array_push($braces, '<');
-              } else if ($this->getValue($child) === '>') {
-                if (count($braces) > 0 && last($braces) === '<') {
-                  array_pop($braces);
-                }
-              }
-            }
-            
-            if ($child === $next_parent) {
-              if ($this->isToken($child)) {
-                if ($this->getValue($child) === '{' ||
-                    $this->getValue($child) === '(' ||
-                    $this->getValue($child) === '<' ||
-                    $this->getValue($child) === '[') {
-                  // Do not include the brace itself when
-                  // considering indentation.
-                  array_pop($braces);
-                }
-              }
-            
-              for ($a = 0; $a < count($braces); $a++) {
-                $indentation .= '    ';
-              }
-              
+      
+      // Traverse down the tree if the next parent is not the token.
+      if ($child === $next_parent && $next_parent !== $token) {
+        return $this->getIndentationFromParent(
+          $index + 1,
+          $child,
+          $token,
+          $parents,
+          $is_trivia_before_token,
+          $global_braces,
+          $last_vardec_line);
+      } else if ($child === $token) {
+        if ($did_indent == true) {
+          // Do not include the child causing indentation
+          // when considering indentation.
+          array_pop($global_braces);
+        }
+      
+        // If our parent is a case or default statement, then do not
+        // cause the 'case' or 'default' statements to be indented.
+        if ($this->getType($parent) === 'CaseSwitchLabelSyntax' ||
+          $this->getType($parent) === 'DefaultSwitchLabelSyntax') {
+          array_pop($global_braces);
+        }
+      
+        $indentation = '';
+        for ($a = 0; $a < count($global_braces); $a++) {
+          $indentation .= '    ';
+        }
+        return $indentation;
+      }
+      
+      // After the node / token.
+      if ($this->isNode($child)) {
+        if ($this->getType($child) === 'CaseSwitchLabelSyntax' ||
+          $this->getType($child) === 'DefaultSwitchLabelSyntax') {
+          // do nothing here
+        } else if (last($global_braces) === $child) {
+          array_pop($global_braces);
+        }
+      } else if ($this->isToken($child)) {
+      }
+    }
+  }
+  
+  protected function getWhitespaceWithOffsetBeforeToken($token, array $parents, $previous = null) {
+    $whitespace_offset = $this->getOffset($token);
+    $whitespace = '';
+    $trivias = idx($token, 'LeadingTrivia', array());
+    $trivias = array_reverse($trivias);
+    $stop = false;
+    foreach ($trivias as $trivia) {
+      $kind = idx($trivia, 'Kind');
+      switch ($kind) {
+        case 'WhitespaceTrivia':
+        case 'EndOfLineTrivia':
+          $whitespace = $this->getText($trivia).$whitespace;
+          $whitespace_offset = $this->getOffset($trivia);
+          break;
+        default:
+          $stop = true;
+          break;
+      }
+      
+      if ($stop) {
+        break;
+      }
+    }
+    
+    // Now also check the previous token in the hierarchy and pull it's
+    // trailing trivia.
+    if ($previous === null) {
+      $previous = $this->findPreviousTokenInHierarchy($token, $parents);
+    }
+    if ($previous !== null) {
+      $trivias = idx($previous, 'TrailingTrivia', array());
+      $trivias = array_reverse($trivias);
+      $stop = false;
+      foreach ($trivias as $trivia) {
+        $kind = idx($trivia, 'Kind');
+        switch ($kind) {
+          case 'WhitespaceTrivia':
+          case 'EndOfLineTrivia':
+            $whitespace = $this->getText($trivia).$whitespace;
+            $whitespace_offset = $this->getOffset($trivia);
+            break;
+          default:
+            $stop = true;
+            break;
+        }
+        
+        if ($stop) {
+          break;
+        }
+      }
+    }
+    
+    return array($whitespace, $whitespace_offset);
+  }
+  
+  protected function getWhitespaceWithOffsetBeforeTrivia(
+    $token,
+    $target_trivia,
+    $trivias,
+    $is_leading,
+    array $parents,
+    $previous = null) {
+    
+    $whitespace_offset = $this->getOffset($target_trivia);
+    $whitespace = '';
+    
+    $trivias = array_reverse($trivias);
+    
+    $stop = false;
+    $active = false;
+    foreach ($trivias as $trivia) {
+      if ($trivia === $target_trivia) {
+        $active = true;
+        continue;
+      } else if (!$active) {
+        continue;
+      }
+      
+      $kind = idx($trivia, 'Kind');
+      switch ($kind) {
+        case 'WhitespaceTrivia':
+        case 'EndOfLineTrivia':
+          $whitespace = $this->getText($trivia).$whitespace;
+          $whitespace_offset = $this->getOffset($trivia);
+          break;
+        default:
+          $stop = true;
+          break;
+      }
+      
+      if ($stop) {
+        break;
+      }
+    }
+    
+    if ($is_leading) {
+      // Now also check the previous token in the hierarchy and pull it's
+      // trailing trivia.
+      if ($previous === null) {
+        $previous = $this->findPreviousTokenInHierarchy($token, $parents);
+      }
+      if ($previous !== null) {
+        $trivias = idx($previous, 'TrailingTrivia', array());
+        $trivias = array_reverse($trivias);
+        $stop = false;
+        foreach ($trivias as $trivia) {
+          $kind = idx($trivia, 'Kind');
+          switch ($kind) {
+            case 'WhitespaceTrivia':
+            case 'EndOfLineTrivia':
+              $whitespace = $this->getText($trivia).$whitespace;
+              $whitespace_offset = $this->getOffset($trivia);
               break;
-            }
+            default:
+              $stop = true;
+              break;
+          }
+          
+          if ($stop) {
+            break;
           }
         }
       }
     }
     
-    return $indentation;
-  }
-  
-  protected function getWhitespaceBeforeNode($node, array $parents, $previous = null) {
-    if (count($parents) === 0) {
-      return '';
-    }
-    
-    if ($previous === null) {
-      // Don't search again if the callee already has the previous token.
-      $previous = $this->findPreviousTokenInHierarchy($node, $parents);
-    }
-    
-    $parent_offset = null;
-    $previous_offset = idx($previous, 'SpanStart');
-    $previous_length = strlen(idx($previous, 'TrimmedText'));
-    $node_offset = idx($node, 'SpanStart');
-    $idx = count($parents);
-    while ($parent_offset === null || $previous_offset < $parent_offset) {
-      $idx--;
-      $parent = $parents[$idx];
-      $parent_offset = idx($parent, 'SpanStart');
-    }
-    
-    $previous_end = ($previous_offset + $previous_length) - $parent_offset;
-    $node_start = $node_offset - $parent_offset;
-    
-    $substr = substr(
-      idx($parent, 'TrimmedText'),
-      $previous_end,
-      $node_start - $previous_end);
-      
-    return $substr;
+    return array($whitespace, $whitespace_offset);
   }
   
 }

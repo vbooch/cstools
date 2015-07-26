@@ -1,0 +1,32 @@
+using System;
+
+public class ABC
+{
+    public void Method()
+    {
+        objectToCall
+            .Call()
+            .AnotherCall();
+        
+        objectToCall.SameLine()
+            .Call()
+            .AnotherCall();
+    }
+}
+~~~~~~~~~~
+~~~~~~~~~~
+using System;
+
+public class ABC
+{
+    public void Method()
+    {
+        objectToCall
+            .Call()
+            .AnotherCall();
+        
+        objectToCall.SameLine()
+            .Call()
+            .AnotherCall();
+    }
+}
