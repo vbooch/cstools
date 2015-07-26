@@ -20,7 +20,6 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Ninject" />
-    <Reference Include="cstools.StyleCop" />
     <Reference Include="Newtonsoft.Json" />
     <Reference Include="Mono.Cecil" />
     <Reference Include="ICSharpCode.NRefactory" />

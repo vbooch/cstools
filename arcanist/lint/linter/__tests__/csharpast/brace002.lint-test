@@ -1,0 +1,12 @@
+using System;
+
+namespace Test {
+}
+~~~~~~~~~~
+error:3:15
+~~~~~~~~~~
+using System;
+
+namespace Test
+{
+}

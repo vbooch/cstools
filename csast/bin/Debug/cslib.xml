@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>cslib</name>
+    </assembly>
+    <members>
+        <member name="M:cslib.IInstrumenter.InstrumentAssembly(Mono.Cecil.AssemblyDefinition,System.String,System.Action{System.Int32,System.Int32,System.String})">
+            <summary>
+            Instruments the assembly.
+            </summary>
+            <returns>The number of instructions instrumented.</returns></member>
+    </members>
+</doc>

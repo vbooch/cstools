@@ -44,7 +44,7 @@ namespace csast
                 var jsonWriter = new JsonTextWriter(writer);
                 var ser = new JsonSerializer();
 
-                ser.Formatting = Newtonsoft.Json.Formatting.Indented;
+                ser.Formatting = Newtonsoft.Json.Formatting.None;
 
                 ser.Serialize(jsonWriter, results);
 
@@ -63,7 +63,9 @@ namespace csast
                 dict["Type"] = "syntax";
                 dict["ASTType"] = node.GetType().Name;
                 dict["Text"] = node.GetText().ToString();
+                dict["TrimmedText"] = node.GetText().ToString().Trim();
                 dict["Span"] = GetAdjustedSpan(node.GetLocation().GetLineSpan().Span);
+                dict["SpanStart"] = node.SpanStart;
                 dict["Children"] = node.ChildNodesAndTokens().Select(ParseNodeOrToken).Cast<object>().ToList();
             }
             if (token != null)
@@ -72,9 +74,21 @@ namespace csast
                 dict["ASTType"] = token.Value.GetType().Name;
                 dict["Value"] = token.Value.Value;
                 dict["Text"] = token.Value.ValueText;
+                dict["TrimmedText"] = token.Value.ValueText.Trim();
                 dict["Span"] = GetAdjustedSpan(token.Value.GetLocation().GetLineSpan().Span);
+                dict["SpanStart"] = token.Value.SpanStart;
             }
             return dict;
+        }
+
+        private static List<object> ParseTrivia(IEnumerable<SyntaxTrivia> syntaxTriviaList)
+        {
+            var list = new List<object>();
+            foreach (var trivia in syntaxTriviaList)
+            {
+                list.Add(ParseNodeOrToken(trivia.Token));
+            }
+            return list;
         }
 
         private static LinePositionSpan GetAdjustedSpan(LinePositionSpan span)

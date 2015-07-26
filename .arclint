@@ -1,0 +1,8 @@
+{
+  "linters": {
+    "csharp-ast": {
+      "type": "csharp-ast",
+      "include": "(\\.cs$)"
+    }
+  }
+}

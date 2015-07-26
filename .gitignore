@@ -114,3 +114,6 @@ UpgradeLog*.XML
 *.sln
 cs*.nuspec
 *.speccache
+/.kdev4/cstools.kdev4
+/.phutil_module_cache
+/cstools.kdev4

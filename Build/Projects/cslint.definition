@@ -22,7 +22,6 @@
     <Reference Include="Mono.Cecil" />
     <Reference Include="ICSharpCode.NRefactory" />
     <Reference Include="NDesk.Options" />
-    <Reference Include="cstools.StyleCop" />
     <Reference Include="cslib" />
   </References>
   <Files>

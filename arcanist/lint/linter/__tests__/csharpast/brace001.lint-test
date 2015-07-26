@@ -1,0 +1,8 @@
+namespace Test {
+}
+~~~~~~~~~~
+error:1:15
+~~~~~~~~~~
+namespace Test
+{
+}
