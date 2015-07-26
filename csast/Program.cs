@@ -77,6 +77,8 @@ namespace csast
                 dict["TrimmedText"] = token.Value.ValueText.Trim();
                 dict["Span"] = GetAdjustedSpan(token.Value.GetLocation().GetLineSpan().Span);
                 dict["SpanStart"] = token.Value.SpanStart;
+                dict["LeadingTrivia"] = ParseTrivia(token.Value.LeadingTrivia);
+                dict["TrailingTrivia"] = ParseTrivia(token.Value.TrailingTrivia);
             }
             return dict;
         }
@@ -86,7 +88,11 @@ namespace csast
             var list = new List<object>();
             foreach (var trivia in syntaxTriviaList)
             {
-                list.Add(ParseNodeOrToken(trivia.Token));
+                var dict = new Dictionary<string, object>();
+                dict["Text"] = trivia.ToString();
+                dict["Span"] = GetAdjustedSpan(trivia.GetLocation().GetLineSpan().Span);
+                dict["SpanStart"] = trivia.SpanStart;
+                list.Add(dict);
             }
             return list;
         }
