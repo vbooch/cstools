@@ -82,9 +82,11 @@ final class ArcanistCSharpASTLinter extends ArcanistLinter {
   }
   
   public function didLintPaths(array $paths) {
-    foreach (new FutureIterator($this->futures) as $future) {
+    foreach (new FutureIterator($this->futures) as $path_orig => $future) {
       list($stdout, $stderr) = $future->resolvex();
       $json = phutil_json_decode($stdout);
+      
+      $this->setActivePath($path_orig);
       
       foreach ($json as $path => $ast) {
         $this->analyzeNode($path, $ast, array());
