@@ -89,7 +89,7 @@ namespace csast
             foreach (var trivia in syntaxTriviaList)
             {
                 var dict = new Dictionary<string, object>();
-                dict["Text"] = trivia.ToString();
+                dict["Text"] = trivia.ToFullString();
                 dict["Kind"] = trivia.Kind().ToString();
                 dict["Span"] = GetAdjustedSpan(trivia.GetLocation().GetLineSpan().Span);
                 dict["SpanStart"] = trivia.SpanStart;
