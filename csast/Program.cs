@@ -90,6 +90,7 @@ namespace csast
             {
                 var dict = new Dictionary<string, object>();
                 dict["Text"] = trivia.ToString();
+                dict["Kind"] = trivia.Kind().ToString();
                 dict["Span"] = GetAdjustedSpan(trivia.GetLocation().GetLineSpan().Span);
                 dict["SpanStart"] = trivia.SpanStart;
                 list.Add(dict);
