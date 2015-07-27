@@ -1,0 +1,32 @@
+using System;
+
+namespace Code
+{
+    public static class Program
+    {
+        public static bool Main()
+        {
+            if (true)
+                DoSomething();
+            else
+                DoSomethingElse();
+        }
+    }
+}
+~~~~~~~~~~
+~~~~~~~~~~
+using System;
+
+namespace Code
+{
+    public static class Program
+    {
+        public static bool Main()
+        {
+            if (true)
+                DoSomething();
+            else
+                DoSomethingElse();
+        }
+    }
+}

@@ -1,0 +1,34 @@
+using System;
+
+namespace Code
+{
+    public static class Program
+    {
+        public static bool Main()
+        {
+            if (true)
+              DoSomething();
+            else
+              DoSomethingElse();
+        }
+    }
+}
+~~~~~~~~~~
+error:10:1
+error:12:1
+~~~~~~~~~~
+using System;
+
+namespace Code
+{
+    public static class Program
+    {
+        public static bool Main()
+        {
+            if (true)
+                DoSomething();
+            else
+                DoSomethingElse();
+        }
+    }
+}

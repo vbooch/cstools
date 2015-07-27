@@ -414,6 +414,19 @@ abstract class CSharpLintPolicy extends Phobject {
             }
           }
         }
+        
+        if ($this->getType($child) === 'ExpressionStatementSyntax') {
+          $parent_type = $this->getType($parent);
+          switch ($this->getType($parent)) {
+            case 'IfStatementSyntax':
+            case 'ElseClauseSyntax':
+            case 'WhileStatementSyntax':
+            case 'ForStatementSyntax':
+            case 'ForEachStatementSyntax':
+              array_push($global_braces, $child);
+              break;
+          }
+        }
       } else if ($this->isToken($child)) {
         if ($this->getValue($child) === '{') {
           array_push($global_braces, $child);

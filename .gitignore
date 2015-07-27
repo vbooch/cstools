@@ -117,3 +117,5 @@ cs*.nuspec
 /.kdev4/cstools.kdev4
 /.phutil_module_cache
 /cstools.kdev4
+/arcanist/lint/linter/__tests__/csharpast/test.cs
+/test.json
