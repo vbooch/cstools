@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace csast
 {
@@ -67,6 +68,7 @@ namespace csast
                 dict["Span"] = GetAdjustedSpan(node.GetLocation().GetLineSpan().Span);
                 dict["SpanStart"] = node.SpanStart;
                 dict["Children"] = node.ChildNodesAndTokens().Select(ParseNodeOrToken).Cast<object>().ToList();
+                AddAdditionalProperties(dict, node);
             }
             if (token != null)
             {
@@ -81,6 +83,51 @@ namespace csast
                 dict["TrailingTrivia"] = ParseTrivia(token.Value.TrailingTrivia);
             }
             return dict;
+        }
+
+        private static void AddAdditionalProperties(Dictionary<string, object> dict, SyntaxNode node)
+        {
+            var baseTypeDeclarationSyntax = node as BaseTypeDeclarationSyntax;
+            if (baseTypeDeclarationSyntax != null)
+            {
+                AddAdditionalPropertiesBaseTypeDeclarationSyntax(dict, baseTypeDeclarationSyntax);
+            }
+
+            var classDeclarationSyntax = node as ClassDeclarationSyntax;
+            if (classDeclarationSyntax != null)
+            {
+                AddAdditionalPropertiesClassDeclarationSyntax(dict, classDeclarationSyntax);
+            }
+        }
+
+        private static void AddAdditionalPropertiesBaseTypeDeclarationSyntax(Dictionary<string, object> dict, BaseTypeDeclarationSyntax node)
+        {
+            var list = new List<object>();
+            if (node.Modifiers != null)
+            {
+                foreach (var modifier in node.Modifiers)
+                {
+                    list.Add(modifier.Value);
+                }
+            }
+            dict["Modifiers"] = list;
+            if (node.Identifier != null)
+            {
+                dict["Identifier"] = ParseNodeOrToken(node.Identifier);
+            }
+        }
+
+        private static void AddAdditionalPropertiesClassDeclarationSyntax(Dictionary<string, object> dict, ClassDeclarationSyntax node)
+        {
+            var list = new List<object>();
+            if (node.BaseList != null && node.BaseList.Types != null)
+            {
+                foreach (var subnode in node.BaseList.Types)
+                {
+                    list.Add(ParseNodeOrToken(subnode));
+                }
+            }
+            dict["BaseTypes"] = list;
         }
 
         private static List<object> ParseTrivia(IEnumerable<SyntaxTrivia> syntaxTriviaList)

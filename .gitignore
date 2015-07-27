@@ -119,3 +119,9 @@ cs*.nuspec
 /cstools.kdev4
 /arcanist/lint/linter/__tests__/csharpast/test.cs
 /test.json
+ICSharpCode.NRefactory/
+Mono.Cecil/
+NDesk.Options/
+Newtonsoft.Json/
+Ninject.Extensions.Factory/
+Ninject/
