@@ -7,6 +7,7 @@ final class ArcanistCSharpASTLinter extends ArcanistLinter {
   private $csastPath;
   private $futures;
   private $analyzers;
+  private $globalOffset = array();
   
   private static function getAnalyzers() {
     static $analyzers = null;
@@ -33,6 +34,7 @@ final class ArcanistCSharpASTLinter extends ArcanistLinter {
         $severities[$analyzer->getCode().$key] = $value;
       }
     }
+    $names['BOM'] = ArcanistLintSeverity::SEVERITY_ERROR;
     return $severities;
   }
 
@@ -43,6 +45,7 @@ final class ArcanistCSharpASTLinter extends ArcanistLinter {
         $names[$analyzer->getCode().$key] = $value;
       }
     }
+    $names['BOM'] = pht('Byte-order-mark should not be present');
     return $names;
   }
 
@@ -88,6 +91,24 @@ final class ArcanistCSharpASTLinter extends ArcanistLinter {
       
       $this->setActivePath($path_orig);
       
+      // Check for a byte-order-mark in the file, and strip it if
+      // it exists.
+      $data = $this->getData($path_orig);
+      $this->globalOffset[head_key($json)] = 0;
+      if (ord($data[0]) === 239 && ord($data[1]) === 187 &&
+          ord($data[2]) === 191) {
+        $this->raiseLintAtOffset(
+          0,
+          'BOM',
+          'All files are stored in ASCII, so the BOM is not '.
+          'permitted.',
+          substr($data, 0, 3),
+          '');
+        
+        // All future lint messages will be offset by 3.
+        $this->globalOffset[head_key($json)] += 3;
+      }
+      
       foreach ($json as $path => $ast) {
         $this->analyzeNode($path, $ast, array());
       }
@@ -97,6 +118,7 @@ final class ArcanistCSharpASTLinter extends ArcanistLinter {
   private function analyzeNode($path, array $node, array $parents) {
     foreach ($this->analyzers as $analyzer) {
       $analyzer->setArcanistCSharpASTLinter($this);
+      $analyzer->setGlobalOffset(idx($this->globalOffset, $path, 0));
       $analyzer->analyzeNode($path, $node, $parents);
     }
     
@@ -114,6 +136,7 @@ final class ArcanistCSharpASTLinter extends ArcanistLinter {
   private function analyzeToken($path, array $token, array $parents) {
     foreach ($this->analyzers as $analyzer) {
       $analyzer->setArcanistCSharpASTLinter($this);
+      $analyzer->setGlobalOffset(idx($this->globalOffset, $path, 0));
       $analyzer->analyzeToken($path, $token, $parents);
     }
   }

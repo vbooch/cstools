@@ -48,7 +48,7 @@ final class IndentationLintPolicy
         $this->raiseLintAtOffset(
           $this->getOffset($token) - strlen($current_indentation),
           self::INDENTATION_IS_INCORRECT,
-          'This line is not indented correctly.',
+          'This token is not indented correctly.',
           $current_indentation,
           $indentation);
       }
@@ -98,13 +98,19 @@ final class IndentationLintPolicy
             continue;
           }
           
+          $npos = strpos($combined, "\n");
+          if ($npos === false || $npos > strpos($combined, $line)) {
+            // This trivia does not have a newline before it.
+            continue;
+          }
+          
           $indentation_chars = strlen($line) - strlen($trimmed_line);
           if ($indentation_chars !== strlen($indentation)) {
             $current_indentation = substr($line, 0, $indentation_chars);
             $this->raiseLintAtOffset(
               $offset,
               self::INDENTATION_IS_INCORRECT,
-              'This line is not indented correctly.',
+              'This trivia is not indented correctly.',
               $current_indentation,
               $indentation);
           }

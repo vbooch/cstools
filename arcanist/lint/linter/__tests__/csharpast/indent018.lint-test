@@ -1,0 +1,56 @@
+using System;
+
+namespace Code
+{
+    public static class EnumExtensions
+    {
+        /// <summary>
+        /// Checks to see if an enumerated value contains a type
+        /// </summary>
+        /// <typeparam name="T">The type of the Enum</typeparam>
+        /// <param name="type">The current enum state</param>
+        /// <param name="value">The flag value</param>
+        /// <returns>Whether or not the current state of the enum contains the value</returns>
+        public static bool HasFlag<T>(this Enum type, T value)
+        {
+            try
+            {
+                return (((int)(object)type &
+                        (int)(object)value) == (int)(object)value);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+    }
+}
+~~~~~~~~~~
+~~~~~~~~~~
+using System;
+
+namespace Code
+{
+    public static class EnumExtensions
+    {
+        /// <summary>
+        /// Checks to see if an enumerated value contains a type
+        /// </summary>
+        /// <typeparam name="T">The type of the Enum</typeparam>
+        /// <param name="type">The current enum state</param>
+        /// <param name="value">The flag value</param>
+        /// <returns>Whether or not the current state of the enum contains the value</returns>
+        public static bool HasFlag<T>(this Enum type, T value)
+        {
+            try
+            {
+                return (((int)(object)type &
+                        (int)(object)value) == (int)(object)value);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+    }
+}

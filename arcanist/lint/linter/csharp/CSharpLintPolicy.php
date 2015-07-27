@@ -3,9 +3,14 @@
 abstract class CSharpLintPolicy extends Phobject {
 
   private $linter;
+  private $globalOffset;
 
   public function setArcanistCSharpASTLinter(ArcanistCSharpASTLinter $linter) {
     $this->linter = $linter;
+  }
+  
+  public function setGlobalOffset($offset) {
+    $this->globalOffset = $offset;
   }
 
   public abstract function getCode();
@@ -63,7 +68,7 @@ abstract class CSharpLintPolicy extends Phobject {
     $replacement = null) {
     
     return $this->linter->raiseLintAtOffset(
-      $offset,
+      $offset + $this->globalOffset,
       $this->getCode().$code,
       $desc,
       $original,
