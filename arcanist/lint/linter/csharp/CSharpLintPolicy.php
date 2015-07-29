@@ -213,19 +213,33 @@ abstract class CSharpLintPolicy extends Phobject {
     return null;
   }
   
-  protected function findChildrenWithType(array $node, $target) {
+  protected function findChildWithType(array $node, $target, $include_parents = false, $parents = array()) {
+    $results = $this->findChildrenWithType($node, $target, $include_parents, $parents);
+    if (count($results) === 0) {
+      return null;
+    }
+    return head($results);
+  }
+  
+  protected function findChildrenWithType(array $node, $target, $include_parents = false, $parents = array()) {
     if (!$this->isNode($node)) {
       return array();
     }
     
     $results = array();
+    array_push($parents, $node);
     foreach ($this->getChildren($node) as $child) {
       if ($this->getType($child) === $target) {
-        $results[] = $child;
+        if ($include_parents) {
+          $results[] = array($child, $parents);
+        } else {
+          $results[] = $child;
+        }
       } else {
-        $results += $this->findChildrenWithType($child, $target);
+        $results += $this->findChildrenWithType($child, $target, $include_parents, $parents);
       }
     }
+    array_pop($parents);
     return $results;
   }
   
@@ -243,6 +257,10 @@ abstract class CSharpLintPolicy extends Phobject {
   
   protected function getText(array $node_or_token) {
     return idx($node_or_token, 'Text', '');
+  }
+  
+  protected function getTrimmedText(array $node_or_token) {
+    return idx($node_or_token, 'TrimmedText', '');
   }
   
   protected function getValue(array $node_or_token) {

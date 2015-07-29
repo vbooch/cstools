@@ -16,7 +16,7 @@ namespace Code
             try
             {
                 return (((int)(object)type &
-                        (int)(object)value) == (int)(object)value);
+                            (int)(object)value) == (int)(object)value);
             }
             catch
             {
@@ -45,7 +45,7 @@ namespace Code
             try
             {
                 return (((int)(object)type &
-                        (int)(object)value) == (int)(object)value);
+                            (int)(object)value) == (int)(object)value);
             }
             catch
             {

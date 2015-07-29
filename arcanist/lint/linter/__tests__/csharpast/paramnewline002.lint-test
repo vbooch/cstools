@@ -1,0 +1,36 @@
+namespace Test
+{
+    class ABC
+    {
+        public ABC(int paramA, int paramB, int paramC,
+            int paramD, int paramE, int paramF,
+            int paramG, int paramH)
+        {
+        }
+    }
+}
+~~~~~~~~~~
+error:5:20
+error:5:31
+error:5:43
+error:6:24
+error:6:36
+error:7:24
+~~~~~~~~~~
+namespace Test
+{
+    class ABC
+    {
+        public ABC(
+            int paramA,
+            int paramB,
+            int paramC,
+            int paramD,
+            int paramE,
+            int paramF,
+            int paramG,
+            int paramH)
+        {
+        }
+    }
+}

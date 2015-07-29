@@ -1,0 +1,41 @@
+namespace Test
+{
+    class ABC
+    {
+        private int BadlyNamedField;
+        
+        public void Method(string abc)
+        {
+            var someVariable = BadlyNamedField;
+            
+            MethodTest(BadlyNamedField);
+        }
+        
+        public void MethodTest(int other)
+        {
+        }
+    }
+}
+~~~~~~~~~~
+error:5:21
+error:9:32
+error:11:24
+~~~~~~~~~~
+namespace Test
+{
+    class ABC
+    {
+        private int _badlyNamedField;
+        
+        public void Method(string abc)
+        {
+            var someVariable = _badlyNamedField;
+            
+            MethodTest(_badlyNamedField);
+        }
+        
+        public void MethodTest(int other)
+        {
+        }
+    }
+}
