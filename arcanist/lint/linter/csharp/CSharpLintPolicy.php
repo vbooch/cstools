@@ -213,6 +213,22 @@ abstract class CSharpLintPolicy extends Phobject {
     return null;
   }
   
+  protected function findChildrenWithType(array $node, $target) {
+    if (!$this->isNode($node)) {
+      return array();
+    }
+    
+    $results = array();
+    foreach ($this->getChildren($node) as $child) {
+      if ($this->getType($child) === $target) {
+        $results[] = $child;
+      } else {
+        $results += $this->findChildrenWithType($child, $target);
+      }
+    }
+    return $results;
+  }
+  
   protected function isToken(array $node_or_token) {
     return idx($node_or_token, 'Type') === 'token';
   }
