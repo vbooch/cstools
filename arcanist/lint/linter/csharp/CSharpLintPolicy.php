@@ -357,28 +357,27 @@ abstract class CSharpLintPolicy extends Phobject {
             $last_gb = last($global_braces);
             if ($this->isNode($last_gb)) {
               if ($this->getType($last_gb) === 'VariableDeclarationSyntax' ||
-                  $this->getType($last_gb) === 'AssignmentExpressionSyntax' ||
-                  $this->getType($last_gb) === 'ReturnStatementSyntax') {
+                  $this->getType($last_gb) === 'AssignmentExpressionSyntax') {
                 if ($this->getStartLine($child) === $this->getStartLine($last_gb)) {
                   // TODO This is not the right way to find the assignment operator,
                   // to do this properly we need to traverse the tree from here, find
                   // the = token, and compare it's offset with the current child.  This
                   // means we need a function for searching for a specific token.
-                  //print_r("last_gb text trimmed: ".json_encode($this->getText($last_gb))."\n");
                   $assignment = strpos(idx($last_gb, 'TrimmedText'), '=');
                   if ($assignment !== false) {
-                    //print_r("last_gb text: ".json_encode($this->getText($last_gb))."\n");
-                    //print_r("last_gb offset: ".json_encode($this->getOffset($last_gb))."\n");
-                    //print_r("last_gb offset + assignment: ".json_encode($this->getOffset($last_gb) + $assignment)."\n");
-                    //print_r("child text: ".json_encode($this->getText($child))."\n");
-                    //print_r("child offset: ".json_encode($this->getOffset($child))."\n");
                     if ($this->getOffset($child) > $this->getOffset($last_gb) + $assignment) {
                       // Cancel the indentation of the variable declaration 
                       // since we have an overridding call that encapsulates
                       // other indentation.
-                      //print_r("popped\n");
                       array_pop($global_braces);
                     }
+                  }
+                }
+              } else if ($this->getType($last_gb) === 'ReturnStatementSyntax') {
+                if ($this->getStartLine($child) === $this->getStartLine($last_gb)) {
+                  if ($this->getOffset($child) > $this->getOffset($last_gb)) {
+                    // Cancel the indentation of the statement.
+                    array_pop($global_braces);
                   }
                 }
               }
@@ -426,7 +425,7 @@ abstract class CSharpLintPolicy extends Phobject {
           }
         }
         
-        if ($this->getType($child) === 'ExpressionStatementSyntax') {
+        if ($this->getType($child) !== 'ElseClauseSyntax') {
           $parent_type = $this->getType($parent);
           switch ($this->getType($parent)) {
             case 'IfStatementSyntax':
@@ -434,7 +433,39 @@ abstract class CSharpLintPolicy extends Phobject {
             case 'WhileStatementSyntax':
             case 'ForStatementSyntax':
             case 'ForEachStatementSyntax':
-              array_push($global_braces, $child);
+              $child_count_after_parenthesis = 0;
+              $had_parenthesis = false;
+              $had_brace = false;
+              $parent_children = $this->getChildren($parent);
+              for ($i = 0; $i < count($parent_children); $i++) {
+                $trimmed_text = idx($parent_children[$i], 'TrimmedText');
+                if (strlen($trimmed_text) >= 1 && $trimmed_text[0] === '{') {
+                  $had_brace = true;
+                }
+                
+                if ($this->isToken($parent_children[$i])) {
+                  if ($this->getText($parent_children[$i]) === ')') {
+                    $had_parenthesis = true;
+                  }
+                  
+                  continue;
+                }
+                
+                if ($this->getType($parent) === 'ElseClauseSyntax' && $i === 1) {
+                  $had_parenthesis = true;
+                }
+                
+                if ($this->getType($parent_children[$i]) === 'ElseClauseSyntax') {
+                  break;
+                }
+                
+                if ($had_parenthesis) {
+                  $child_count_after_parenthesis++;
+                }
+              }
+              if ($child_count_after_parenthesis === 1 && !$had_brace) {
+                array_push($global_braces, $child);
+              }
               break;
           }
         }
