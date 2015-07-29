@@ -62,17 +62,17 @@ namespace cslib
                 {
                     // Create the field.
                     var fieldDef = new FieldDefinition(
-                        fieldName,
-                        FieldAttributes.Public | FieldAttributes.Static, 
-                        this.m_MainModule.Import(typeof(bool)));
+                            fieldName,
+                            FieldAttributes.Public | FieldAttributes.Static, 
+                            this.m_MainModule.Import(typeof(bool)));
                     this.m_RecorderDefinition.Fields.Add(fieldDef);
                     this.m_Mappings.Add(fieldName, new InstrumentationInfo
-                    {
-                        Filename = filename,
-                        Start = start,
-                        End = end,
-                        FieldDef = fieldDef
-                    });
+                        {
+                            Filename = filename,
+                            Start = start,
+                            End = end,
+                            FieldDef = fieldDef
+                        });
                 }
                 var field = this.m_RecorderDefinition.Fields.First(x => x.Name == fieldName);
                 var insertBoolOp = processor.Create(OpCodes.Ldc_I4_1);
@@ -86,18 +86,18 @@ namespace cslib
             {
                 // Add the static destructor.
                 var destructorType = new TypeDefinition(
-                    "",
-                    "Finalizer",
-                    TypeAttributes.Class | TypeAttributes.NestedPrivate | TypeAttributes.Sealed |
-                    TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.BeforeFieldInit,
-                    this.m_MainModule.Import(typeof(object)));
+                        "",
+                        "Finalizer",
+                        TypeAttributes.Class | TypeAttributes.NestedPrivate | TypeAttributes.Sealed |
+                        TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.BeforeFieldInit,
+                        this.m_MainModule.Import(typeof(object)));
                 var destructor = new MethodDefinition(
                     "Finalize",
                     MethodAttributes.Family | MethodAttributes.Virtual | MethodAttributes.HideBySig,
                     this.m_MainModule.Import(typeof(void)));
                 destructor.Body.InitLocals = true;
                 destructor.Body.Variables.Add(new VariableDefinition(
-                    this.m_MainModule.Import(typeof(System.IO.StreamWriter))));
+                        this.m_MainModule.Import(typeof(System.IO.StreamWriter))));
                 var processor = destructor.Body.GetILProcessor();
                 processor.Emit(OpCodes.Ldstr, this.m_OutputPath);
                 processor.Emit(OpCodes.Ldc_I4_1);
@@ -184,7 +184,7 @@ namespace cslib
             var recorder = new InstrumentationRecorder(assembly, output);
             var i = 0;
             foreach (var module in assembly.Modules)
-                i += this.InstrumentModule(module, recorder, instructionInstrumented);
+                        i += this.InstrumentModule(module, recorder, instructionInstrumented);
             recorder.Finalise();
             return i;
         }

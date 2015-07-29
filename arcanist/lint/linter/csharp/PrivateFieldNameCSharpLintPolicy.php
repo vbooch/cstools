@@ -63,6 +63,16 @@ final class PrivateFieldNameCSharpLintPolicy
   }
   
   private function normalizeName($name) {
+    if (strlen($name) >= 2) {
+      if (substr($name, 0, 2) === 'm_') {
+        $name = substr($name, 2);
+      } else if (substr($name, 0, 2) === 'p_') {
+        $name = substr($name, 2);
+      } else if (substr($name, 0, 2) === 'c_') {
+        $name = substr($name, 2);
+      }
+    }
+  
     if ($name[0] !== '_') {
       $name = '_'.$name;
     }

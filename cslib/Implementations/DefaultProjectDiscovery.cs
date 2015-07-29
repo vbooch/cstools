@@ -8,17 +8,17 @@ namespace cslib
 {
     public class DefaultProjectDiscovery : IProjectDiscovery
     {
-        private readonly ISettings m_Settings;
+        private readonly ISettings _settings;
         
         public DefaultProjectDiscovery(
             ISettings settings)
         {
-            this.m_Settings = settings;
+            this._settings = settings;
         }
         
         public IEnumerable<DiscoveredProject> DiscoverProjects(string file)
         {
-            dynamic patterns = this.m_Settings.Get();
+            dynamic patterns = this._settings.Get();
             foreach (var kv in patterns)
             {
                 var regexPattern = kv.Key;

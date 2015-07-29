@@ -108,7 +108,7 @@ namespace cscover
                             assembly,
                             trackTemp,
                             (start, end, document) =>
-                                instrumented.Add(new ReportLine { StartLine = start, EndLine = end, Document = document }));
+                            instrumented.Add(new ReportLine { StartLine = start, EndLine = end, Document = document }));
                         assembly.Write(assemblyFile);
                     }
                     catch (ApplicationException ex)
@@ -124,11 +124,11 @@ namespace cscover
                 // Execute the command.
                 Console.WriteLine("Executing command");
                 var process = Process.Start(new ProcessStartInfo
-                {
-                    FileName = command,
-                    Arguments = commandArgs,
-                    WorkingDirectory = workDir
-                });
+                    {
+                        FileName = command,
+                        Arguments = commandArgs,
+                        WorkingDirectory = workDir
+                    });
                 process.WaitForExit();
             }
             finally

@@ -5,16 +5,16 @@ namespace cslib
 {
     public class JsonSettings : ISettings
     {
-        private Dictionary<string, dynamic> m_Settings;
+        private Dictionary<string, dynamic> _settings;
         
         public JsonSettings(string json)
         {
-            this.m_Settings = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(json);
+            this._settings = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(json);
         }
 
         public dynamic Get()
         {
-            return this.m_Settings;
+            return this._settings;
         }
     }
 }
