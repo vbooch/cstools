@@ -425,49 +425,57 @@ abstract class CSharpLintPolicy extends Phobject {
           }
         }
         
-        if ($this->getType($child) !== 'ElseClauseSyntax') {
-          $parent_type = $this->getType($parent);
-          switch ($this->getType($parent)) {
-            case 'IfStatementSyntax':
-            case 'ElseClauseSyntax':
-            case 'WhileStatementSyntax':
-            case 'ForStatementSyntax':
-            case 'ForEachStatementSyntax':
-              $child_count_after_parenthesis = 0;
-              $had_parenthesis = false;
-              $had_brace = false;
-              $parent_children = $this->getChildren($parent);
-              for ($i = 0; $i < count($parent_children); $i++) {
-                $trimmed_text = idx($parent_children[$i], 'TrimmedText');
-                if (strlen($trimmed_text) >= 1 && $trimmed_text[0] === '{') {
-                  $had_brace = true;
-                }
-                
-                if ($this->isToken($parent_children[$i])) {
-                  if ($this->getText($parent_children[$i]) === ')') {
+        switch ($this->getType($child)) {
+          case 'IfStatementSyntax':
+          case 'ElseClauseSyntax':
+          case 'WhileStatementSyntax':
+          case 'ForStatementSyntax':
+          case 'ForEachStatementSyntax':
+            continue;
+          default:
+            $parent_type = $this->getType($parent);
+            switch ($this->getType($parent)) {
+              case 'IfStatementSyntax':
+              case 'ElseClauseSyntax':
+              case 'WhileStatementSyntax':
+              case 'ForStatementSyntax':
+              case 'ForEachStatementSyntax':
+                $child_count_after_parenthesis = 0;
+                $had_parenthesis = false;
+                $had_brace = false;
+                $parent_children = $this->getChildren($parent);
+                for ($i = 0; $i < count($parent_children); $i++) {
+                  $trimmed_text = idx($parent_children[$i], 'TrimmedText');
+                  if (strlen($trimmed_text) >= 1 && $trimmed_text[0] === '{') {
+                    $had_brace = true;
+                  }
+                  
+                  if ($this->isToken($parent_children[$i])) {
+                    if ($this->getText($parent_children[$i]) === ')') {
+                      $had_parenthesis = true;
+                    }
+                    
+                    continue;
+                  }
+                  
+                  if ($this->getType($parent) === 'ElseClauseSyntax' && $i === 1) {
                     $had_parenthesis = true;
                   }
                   
-                  continue;
+                  if ($this->getType($parent_children[$i]) === 'ElseClauseSyntax') {
+                    break;
+                  }
+                  
+                  if ($had_parenthesis) {
+                    $child_count_after_parenthesis++;
+                  }
                 }
-                
-                if ($this->getType($parent) === 'ElseClauseSyntax' && $i === 1) {
-                  $had_parenthesis = true;
+                if ($child_count_after_parenthesis === 1 && !$had_brace) {
+                  array_push($global_braces, $child);
                 }
-                
-                if ($this->getType($parent_children[$i]) === 'ElseClauseSyntax') {
-                  break;
-                }
-                
-                if ($had_parenthesis) {
-                  $child_count_after_parenthesis++;
-                }
-              }
-              if ($child_count_after_parenthesis === 1 && !$had_brace) {
-                array_push($global_braces, $child);
-              }
-              break;
-          }
+                break;
+            }
+            break;
         }
       } else if ($this->isToken($child)) {
         if ($this->getValue($child) === '{') {
