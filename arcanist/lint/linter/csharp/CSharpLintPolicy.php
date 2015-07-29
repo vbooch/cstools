@@ -357,7 +357,8 @@ abstract class CSharpLintPolicy extends Phobject {
             $last_gb = last($global_braces);
             if ($this->isNode($last_gb)) {
               if ($this->getType($last_gb) === 'VariableDeclarationSyntax' ||
-                  $this->getType($last_gb) === 'AssignmentExpressionSyntax') {
+                  $this->getType($last_gb) === 'AssignmentExpressionSyntax' ||
+                  $this->getType($last_gb) === 'ReturnStatementSyntax') {
                 if ($this->getStartLine($child) === $this->getStartLine($last_gb)) {
                   // TODO This is not the right way to find the assignment operator,
                   // to do this properly we need to traverse the tree from here, find
@@ -400,6 +401,16 @@ abstract class CSharpLintPolicy extends Phobject {
             $last_gb = last($global_braces);
             if (!$this->isNode($last_gb) ||
               $this->getType($last_gb) !== 'VariableDeclarationSyntax') {
+              array_push($global_braces, $child);
+            }
+          }
+        }
+        
+        if ($this->getType($child) === 'ReturnStatementSyntax') {
+          if ($this->getStartLine($child) < $this->getStartLine($token)) {
+            $last_gb = last($global_braces);
+            if (!$this->isNode($last_gb) ||
+              $this->getType($last_gb) !== 'ReturnStatementSyntax') {
               array_push($global_braces, $child);
             }
           }
