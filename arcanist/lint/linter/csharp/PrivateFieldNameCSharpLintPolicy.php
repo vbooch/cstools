@@ -38,6 +38,12 @@ final class PrivateFieldNameCSharpLintPolicy
       $classes = $this->getClasses($path, $node);
       
       foreach ($classes as $class) {
+        if ($class->isPartial()) {
+          // We can't safely refactor partial classes when we only
+          // have a single file as the context.
+          continue;
+        }
+      
         $private_fields = $class->getFields(CSharpVisibility::VISIBILITY_PRIVATE);
         foreach ($private_fields as $field) {
           $normalized_name = $this->normalizeName($field->getName());

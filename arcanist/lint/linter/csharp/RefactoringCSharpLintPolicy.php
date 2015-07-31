@@ -35,6 +35,15 @@ abstract class RefactoringCSharpLintPolicy extends CSharpLintPolicy {
     $class = new CSharpClass();
     $class->setASTNode($node);
     
+    $modifiers = idx($node, 'Modifiers', array());
+    foreach ($modifiers as $modifier) {
+      switch ($modifier) {
+        case 'partial':
+          $class->setIsPartial(true);
+          break;
+      }
+    }
+    
     $class->setVisibility($this->getVisibilityOfTopLevel($node));
     
     $type = CSharpClass::TYPE_CLASS;
@@ -99,9 +108,6 @@ abstract class RefactoringCSharpLintPolicy extends CSharpLintPolicy {
           break;
         case 'internal':
           $visibility = CSharpVisibility::VISIBILITY_INTERNAL;
-          break;
-        case 'partial':
-          $class->setPartial(true);
           break;
       }
     }
