@@ -53,7 +53,7 @@ namespace cslib
                     Name = e.Violation.Rule.Name,
                     Code = e.Violation.Rule.CheckId,
                     Message = e.Message,
-                    Severity = e.Warning ? LintSeverity.WARNING : LintSeverity.ERROR
+                    Severity = e.SourceCode.Project.ViolationsAsErrors ? LintSeverity.ERROR : LintSeverity.WARNING
                 };
                 results.Issues.Add(new LintIssue
                 {
