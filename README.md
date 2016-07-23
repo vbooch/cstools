@@ -1,3 +1,5 @@
+**IMPORTANT: This project is no longer maintained.  Visual Studio Analyzers supersede the functionality provided by this project in almost every way; it is recommended that you use analyzers instead.**
+
 # cstools
 
 ## cslint
