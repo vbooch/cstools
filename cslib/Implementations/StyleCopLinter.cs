@@ -1,7 +1,7 @@
 using System;
-using StyleCop;
 using System.Collections.Generic;
 using System.IO;
+using StyleCop;
 
 namespace cslib
 {

@@ -1,9 +1,10 @@
 using System.Linq;
 using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.NRefactory.PatternMatching;
 
 namespace cslib
 {
+    using ICSharpCode.NRefactory.PatternMatching;
+
     public class UseImplicitVariableTypeInDeclarationPolicy : LintPolicy
     {
         private VariableDeclarationStatement m_Pattern;

@@ -1,14 +1,14 @@
 using System;
-using Mono.Cecil;
-using Mono.Cecil.Cil;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using MethodInfo = System.Reflection.MethodInfo;
+using Mono.Cecil;
 
 namespace cslib
 {
+    using Mono.Cecil.Cil;
+
     public class DefaultInstrumenter : IInstrumenter
     {
         private bool HasSkipInstrumentation(ICustomAttributeProvider type)

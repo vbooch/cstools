@@ -1,9 +1,9 @@
-using Mono.Cecil;
-using System.Reflection;
 using System;
 
 namespace cslib
 {
+    using Mono.Cecil;
+
     public interface IInstrumenter
     {
         /// <summary>
